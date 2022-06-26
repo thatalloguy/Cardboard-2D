@@ -10,10 +10,7 @@ class Sprite:
     def __init__(self,path=None):
         self.path = path
         self.logger = Logger()
-        if self.path == None:
-            self.logger.send_error("Missing -Path in Sprite")
-        elif self.path != None:
-            self.image = pygame.image.load(self.path)
+
 
     def get_path(self):
         return self.path

@@ -1,17 +1,26 @@
 from cardboard.Logger import *
 import pygame
 pygame.init()
+import os
+
+# Get the current working directory
+
 class Board:
     def __init__(self,width,height,title=None,icon=None,fullscreen=None,fps=None,bg=None):
         self.logger = Logger()
         self.width = width
+        self.is_sky = False
         self.height = height
         self.title = title
         self.fps = fps
         self.icon = icon
         self.bg = bg
+        self.cwd = os.getcwd()
         self.anlog_keys = {0:0, 1:0, 2:0, 3:0, 4:-1, 5: -1}
         self.fullscreen = fullscreen
+
+
+        self.entities = []
 
         self.clock = pygame.time.Clock()
         #Window Creation
@@ -37,7 +46,7 @@ class Board:
             self.logger.send_info("Using Custom Icon")
 
         elif self.icon == None:
-            self.icon_image = pygame.image.load("cardboard/images/logo.png")
+            self.icon_image = pygame.image.load((str(self.cwd) + "/cardboard/images/logo.png"))
             pygame.display.set_icon(self.icon_image)
             self.logger.send_info("Using Template Icon")
 
@@ -53,14 +62,16 @@ class Board:
         pygame.display.flip()
         pygame.display.update()
 
+    def get_all_entities_in_window(self):
+        return self.entities
 
+    def add_entity_to_window(self,entity):
+        self.entities.append(entity)
 
     def loop_init(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT: quit()
-
-        self.screen.fill(self.bg)
-
+        self.screen.fill((0,0,0))
     def get_key_state(self,key):
         self.keys = pygame.key.get_pressed()
 
@@ -89,3 +100,9 @@ class Board:
 
     def get_fps(self):
         return str(self.clock.get_fps())
+    def set_font(self,fontstyle):
+        if fontstyle == "PIXEL":
+            self.font = pygame.font.Font((str(self.cwd) + '/cardboard/fonts/FFFFORWA.TTF'), 32)
+
+    def create_text(self,text,color1,color2):
+        return self.font.render(text,True,color1,color2)

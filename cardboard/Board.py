@@ -6,10 +6,11 @@ import os
 # Get the current working directory
 
 class Board:
-    def __init__(self,width,height,title=None,icon=None,fullscreen=None,fps=None,bg=None):
+    def __init__(self,width,height,title=None,icon=None,fullscreen=None,fps=None,bg=None,resolution=None):
         self.logger = Logger()
         self.width = width
         self.is_sky = False
+        self.resolution = resolution
         self.height = height
         self.title = title
         self.fps = fps
@@ -25,12 +26,18 @@ class Board:
         self.clock = pygame.time.Clock()
         #Window Creation
         if self.fullscreen != None:
+
             self.screen = pygame.display.set_mode([self.width, self.height], pygame.FULLSCREEN)
             self.logger.send_info("Creating window in fullscreen")
 
         elif self.fullscreen == None:
-            self.screen = pygame.display.set_mode([self.width, self.height])
-            self.logger.send_info("Creating window")
+            if self.resolution != None:
+                self.window = pygame.display.set_mode([self.width, self.height])
+                self.screen = self.resolution
+                self.logger.send_info("Creating window using custom resolution")
+            else:
+                self.screen = pygame.display.set_mode([self.width, self.height])
+                self.logger.send_info("Creating window using custom resolution")
 
         if self.title != None:
             pygame.display.set_caption(self.title)
@@ -71,7 +78,7 @@ class Board:
     def loop_init(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT: quit()
-        self.screen.fill((0,0,0))
+        self.screen.fill(self.bg)
     def get_key_state(self,key):
         self.keys = pygame.key.get_pressed()
 

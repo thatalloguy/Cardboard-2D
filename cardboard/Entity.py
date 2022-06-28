@@ -8,7 +8,7 @@ except:
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self,camera,pos,sprite,width,height):
-        super().__init__(camera)
+        pygame.sprite.Sprite.__init__(self)
         self.logger = Logger()
         self.cwd = os.getcwd()
         self.window = pygame.display.get_surface()
@@ -19,7 +19,8 @@ class Entity(pygame.sprite.Sprite):
         self.width = width
         self.path = self.sprite
         self.height = height
-        self.logger.send_info("Converting Sprite Image")
+        self.camera = camera
+        #self.logger.send_info("Converting Sprite Image")
 
 
         try:
@@ -28,13 +29,13 @@ class Entity(pygame.sprite.Sprite):
             self.image = pygame.image.load(str(self.cwd) + "/" + "cardboard/images/missing_texture.png")
             self.logger.send_warning("Missing a texture!", type="MEDIUM",poppup=False)
 
-        self.logger.send_info("Scaling Sprite Image")
+        #self.logger.send_info("Scaling Sprite Image")
         self.image = pygame.transform.scale(self.image, (self.width, self.height))
 
         self.rect = self.image.get_rect(center=self.pos)
 
-        self.logger.send_info("Creating Entity")
-        self.camera = camera
+        #self.logger.send_info("Creating Entity")
+        self.ground_y = self.pos[1]
         self.frame = 9
         self.last_update = pygame.time.get_ticks()
 
@@ -43,7 +44,9 @@ class Entity(pygame.sprite.Sprite):
     def get_type(self):
         return "ENTITY"
 
-
+    def render(self):
+        self.image = pygame.transform.scale(self.image, (self.width * self.camera.get_zoom(), self.height * self.camera.get_zoom()))
+        pygame.display.get_surface().blit(self.image, (self.rect.x + self.camera.get_pos()[0],self.rect.y + self.camera.get_pos()[1]))
     def play_animation(self,animation,speed):
         
         self.current_animation = animation

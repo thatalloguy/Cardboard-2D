@@ -12,8 +12,8 @@ class Entity(pygame.sprite.Sprite):
         self.logger = Logger()
         self.cwd = os.getcwd()
         self.window = pygame.display.get_surface()
-        self.x = pos[0]
-        self.y = pos[1]
+        self.x = round(pos[0])
+        self.y = round(pos[1])
         self.pos = pos
         self.sprite = sprite.get_path()
         self.width = width
@@ -39,13 +39,12 @@ class Entity(pygame.sprite.Sprite):
         self.frame = 9
         self.last_update = pygame.time.get_ticks()
 
-
-
+        self.string = str(self.x) + "|" + str(self.y) + "|" +  str(self.path) + "|" + str(self.width) + "|" + str(self.height) + "$"
     def get_type(self):
         return "ENTITY"
 
     def render(self):
-        self.image = pygame.transform.scale(self.image, (self.width * self.camera.get_zoom(), self.height * self.camera.get_zoom()))
+        #self.image = pygame.transform.scale(self.image, (self.width * self.camera.get_zoom(), self.height * self.camera.get_zoom()))
         pygame.display.get_surface().blit(self.image, (self.rect.x + self.camera.get_pos()[0],self.rect.y + self.camera.get_pos()[1]))
     def play_animation(self,animation,speed):
         

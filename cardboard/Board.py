@@ -26,8 +26,8 @@ class Board:
         self.clock = pygame.time.Clock()
         #Window Creation
         if self.fullscreen != None:
-
-            self.screen = pygame.display.set_mode([self.width, self.height], pygame.FULLSCREEN)
+            infoObject = pygame.display.Info()
+            self.screen = pygame.display.set_mode((infoObject.current_w, infoObject.current_h))
             self.logger.send_info("Creating window in fullscreen")
 
         elif self.fullscreen == None:
@@ -64,10 +64,13 @@ class Board:
             self.bg = (0,0,0)
 
     def update(self):
-        #self.clock.tick(self.fps)
+        try:
+            self.clock.tick(self.fps)
 
-        pygame.display.flip()
-        pygame.display.update()
+            pygame.display.flip()
+            pygame.display.update()
+        except:
+            pass
 
     def get_all_entities_in_window(self):
         return self.entities
@@ -75,10 +78,11 @@ class Board:
     def add_entity_to_window(self,entity):
         self.entities.append(entity)
 
-    def loop_init(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT: quit()
-        self.screen.fill(self.bg)
+    def clear(self,r,g,b):
+        try:
+            pygame.display.get_surface().fill((r,g,b))
+        except:
+            pass
     def get_key_state(self,key):
         self.keys = pygame.key.get_pressed()
 

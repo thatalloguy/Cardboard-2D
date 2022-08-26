@@ -1,4 +1,5 @@
 from cardboard.Logger import *
+
 import pygame
 pygame.init()
 import os
@@ -6,7 +7,7 @@ import os
 # Get the current working directory
 
 class Board:
-    def __init__(self,width,height,title=None,icon=None,fullscreen=None,fps=None,bg=None,resolution=None):
+    def __init__(self,width,height,title=None,icon=None,fullscreen=None,fps=60,bg=None,resolution=None):
         self.logger = Logger()
         self.width = width
         self.is_sky = False
@@ -32,11 +33,11 @@ class Board:
 
         elif self.fullscreen == None:
             if self.resolution != None:
-                self.window = pygame.display.set_mode([self.width, self.height])
+                self.window = pygame.display.set_mode([self.width, self.height], pygame.RESIZABLE)
                 self.screen = self.resolution
                 self.logger.send_info("Creating window using custom resolution")
             else:
-                self.screen = pygame.display.set_mode([self.width, self.height])
+                self.screen = pygame.display.set_mode([self.width, self.height], pygame.RESIZABLE)
                 self.logger.send_info("Creating window using custom resolution")
 
         if self.title != None:
@@ -53,7 +54,7 @@ class Board:
             self.logger.send_info("Using Custom Icon")
 
         elif self.icon == None:
-            self.icon_image = pygame.image.load((str(self.cwd) + "/cardboard/images/logo.png"))
+            self.icon_image = pygame.image.load(("cardboard/images/logo.png"))
             pygame.display.set_icon(self.icon_image)
             self.logger.send_info("Using Template Icon")
 
@@ -72,48 +73,13 @@ class Board:
         except:
             pass
 
-    def get_all_entities_in_window(self):
-        return self.entities
-
-    def add_entity_to_window(self,entity):
-        self.entities.append(entity)
 
     def clear(self,r,g,b):
         try:
             pygame.display.get_surface().fill((r,g,b))
         except:
             pass
-    def get_key_state(self,key):
-        self.keys = pygame.key.get_pressed()
 
-        if self.keys[key]:
-            return True
-
-
-        self.clock.tick(self.fps)
-
-    def __get_joycon_state(self):
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.JOYAXISMOTION:
-                self.anlog_keys[event.axis] = event.value
-
-                if abs(self.anlog_keys[0]) > .4:
-                    if self.anlog_keys[0] < -.7:
-                        return "LEFT"
-                    if self.anlog_keys[0] < .7:
-                        return "RIGHT"
-                if abs(self.anlog_keys[1]) > .4:
-                    if self.anlog_keys[1] < -.7:
-                        return "UP"
-                    if self.anlog_keys[1] < .7:
-                        return "DOWN"
 
     def get_fps(self):
         return str(self.clock.get_fps())
-    def set_font(self,fontstyle):
-        if fontstyle == "PIXEL":
-            self.font = pygame.font.Font((str(self.cwd) + '/cardboard/fonts/FFFFORWA.TTF'), 32)
-
-    def create_text(self,text,color1,color2):
-        return self.font.render(text,True,color1,color2)

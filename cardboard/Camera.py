@@ -13,20 +13,17 @@ class Camera:
 
 
     def set_y(self, y):
-        self.cam_x = y
+        self.cam_y = y
 
 
     def move_x(self, x):
         self.cam_x += x
 
     def move_y(self, y):
-        self.cam_x += y
+        self.cam_y += y
 
     def zoom_in(self,zoom):
-        if self.zoom > 1 or self.zoom == 1:
-            self.zoom += zoom
-        else:
-            self.zoom = 1
+        self.zoom += zoom
 
     def get_zoom(self):
         return self.zoom

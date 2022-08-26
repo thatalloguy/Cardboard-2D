@@ -7,24 +7,32 @@ except:
     pass
 
 class Entity(pygame.sprite.Sprite):
-    def __init__(self,camera,pos,sprite,width,height):
+    def __init__(self,camera,pos,sprite,width,height,debug_rendering=False,debug_color=(255,0,0)):
         pygame.sprite.Sprite.__init__(self)
         self.logger = Logger()
         self.cwd = os.getcwd()
         self.window = pygame.display.get_surface()
+        self.monitor_width = pygame.display.get_window_size()[0]
+        self.monitor_height = pygame.display.get_window_size()[1]
         self.x = round(pos[0])
         self.y = round(pos[1])
         self.pos = pos
         self.sprite = sprite.get_path()
         self.width = width
         self.path = self.sprite
+        self.old_path = self.path
         self.height = height
         self.camera = camera
+        self.id = 0
+        self.destroyed = False
+        self.debug_rendering = debug_rendering
+        self.debug_color = debug_color
+        self.zoom = self.camera.zoom
         #self.logger.send_info("Converting Sprite Image")
 
 
         try:
-            self.image = pygame.image.load(str(self.cwd) + "/" +self.path)
+            self.image = pygame.image.load(self.path)
         except:
             self.image = pygame.image.load(str(self.cwd) + "/" + "cardboard/images/missing_texture.png")
             self.logger.send_warning("Missing a texture!", type="MEDIUM",poppup=False)
@@ -45,7 +53,31 @@ class Entity(pygame.sprite.Sprite):
 
     def render(self):
         #self.image = pygame.transform.scale(self.image, (self.width * self.camera.get_zoom(), self.height * self.camera.get_zoom()))
-        pygame.display.get_surface().blit(self.image, (self.rect.x + self.camera.get_pos()[0],self.rect.y + self.camera.get_pos()[1]))
+        if not self.destroyed:
+            self.rect.x = self.camera.cam_x + self.x# + self.monitor_width / 2
+            self.rect.y = self.camera.cam_y + self.y# + self.monitor_height / 2
+            #self.x, self.y = self.rect.x,self.rect.y
+            if self.rect.w != self.width:
+                self.image = pygame.transform.scale(self.image, (self.width, self.height))
+
+            if self.rect.h != self.height:
+                self.image = pygame.transform.scale(self.image, (self.width, self.height))
+
+            if self.old_path != self.path:
+                self.old_path = self.path
+                try:
+                    self.image = pygame.image.load(self.path)
+                    self.image = pygame.transform.scale(self.image, (self.width, self.height))
+                except:
+                    self.image = pygame.image.load(str(self.cwd) + "/" + "cardboard/images/missing_texture.png")
+                    self.image = pygame.transform.scale(self.image, (self.width, self.height))
+                    self.logger.send_warning("Missing a texture!", type="MEDIUM", poppup=False)
+
+            self.rect.w = self.width
+            self.rect.h = self.height
+            pygame.display.get_surface().blit(self.image, (self.rect.x,self.rect.y))
+            if self.debug_rendering:
+                pygame.draw.rect(self.window,self.debug_color,self.rect,4)
     def play_animation(self,animation,speed):
         
         self.current_animation = animation
@@ -65,3 +97,6 @@ class Entity(pygame.sprite.Sprite):
         #print(str(self.frame))
         #if self.frame < len(animation) or self.frame == len(animation):
         #    self.image = self.current_animation[self.frame]
+
+    def destroy(self):
+        self.destroyed = True

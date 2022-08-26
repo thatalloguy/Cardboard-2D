@@ -3,11 +3,11 @@ import time
 from cardboard.Text import *
 
 class Button:
-	def __init__(self, x, y, widths,heights,text,image="cardboard/images/gui/button_neutral.png",command=None,toggle=False,disabled=False):
+	def __init__(self, x, y, widths,heights,text,image="cardboard/images/gui/button_neutral.png",offset_x=0,offset_y=0,command=None,toggle=False,disabled=False,font="cardboard/fonts/mon.ttf"):
 		self.image = pygame.image.load(image)
 		width = self.image.get_width()
 		self.text = text
-		self.text_object = Text(self.text,(x,y))
+		self.text_object = Text(self.text,x,y,font=font)
 		height = self.image.get_height()
 		self.image = pygame.transform.scale(self.image, (int(widths), int(heights)))
 		self.rect = self.image.get_rect()
@@ -19,6 +19,8 @@ class Button:
 		self.widths = widths
 		self.heights = heights
 		self.x, self.y = x,y
+		self.offset_x = offset_x
+		self.offset_y = offset_y
 		self.disabled = disabled
 		self.pressed = False
 
@@ -27,7 +29,8 @@ class Button:
 		action = False
 		#get mouse position
 		pos = pygame.mouse.get_pos()
-
+		self.text_object.x = self.rect.x + self.offset_x
+		self.text_object.y = self.rect.y + self.offset_y
 		#check mouseover and clicked conditions
 		if self.rect.collidepoint(pos):
 			if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:

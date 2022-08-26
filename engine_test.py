@@ -1,49 +1,25 @@
-import pygame, sys
+import pygame
+import pygame_gui
+import i18n
 
 pygame.init()
-clock = pygame.time.Clock()
-screen = pygame.display.set_mode([800,800])
-base_font = pygame.font.Font(None,32)
-user_text = ''
-input_rect = pygame.Rect(200,200,140,32)
-color_active = pygame.Color('white')
-color_passive = pygame.Color('gray15')
-color = color_passive
 
-active = False
+pygame.display.set_caption('Quick Start')
+window_surface = pygame.display.set_mode((800, 600))
 
-while True:
+background = pygame.Surface((800, 600))
+background.fill(pygame.Color('#000000'))
+
+manager = pygame_gui.UIManager((800, 600))
+
+is_running = True
+
+while is_running:
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+            is_running = False
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if input_rect.collidepoint(event.pos):
-                active = True
-                color = color_active
-            else:
-                active = False
-                color = color_passive
+    window_surface.blit(background, (0, 0))
 
-
-
-        if event.type == pygame.KEYDOWN:
-            if active:
-                if event.key == pygame.K_BACKSPACE:
-                    user_text = user_text[:-1]
-                else:
-                    user_text += event.unicode
-
-
-    screen.fill((0,0,0))
-
-    pygame.draw.rect(screen,color,input_rect,2)
-
-    text_surface = base_font.render(user_text,True,(255,255,255))
-    screen.blit(text_surface, (input_rect.x + 5,input_rect.y + 5))
-
-    input_rect.w = max(100, text_surface.get_width() + 10)
-
-    pygame.display.flip()
-    clock.tick(60)
+    pygame.display.update()
